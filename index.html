@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZINO AgroVision - IBH Engine</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#030712',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            gold: '#f59e0b',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            rose: '#f43f5e'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at 50% 10%, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-gold {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.3);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between items-center p-3 sm:p-6 selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Top Navigation & Language Selector -->
+    <header class="w-full max-w-xl flex items-center justify-between gap-2 mb-4">
+        <!-- Logo / Brand -->
+        <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 border border-emerald-300/40">
+                <i class="fa-solid fa-leaf text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-emerald-300 to-cyan-400">
+                    ZINO AgroVision
+                </h1>
+                <p class="text-[10px] text-slate-400 font-mono tracking-wider">C++ ENGINE v2.4</p>
+            </div>
+        </div>
+
+        <!-- Language Selector Dropdown -->
+        <div class="glass-card rounded-xl px-3 py-1.5 border border-amber-500/30 flex items-center gap-2 shadow-md hover:border-amber-400 transition">
+            <i class="fa-solid fa-globe text-cyan-400 text-sm"></i>
+            <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-amber-300 font-bold text-xs outline-none cursor-pointer">
+                <option value="ar" class="bg-slate-900 text-white">العربية (Arabic)</option>
+                <option value="en" class="bg-slate-900 text-white">English</option>
+                <option value="ru" class="bg-slate-900 text-white">Русский (Russian)</option>
+                <option value="de" class="bg-slate-900 text-white">Deutsch (German)</option>
+                <option value="tr" class="bg-slate-900 text-white">Türkçe (Turkish)</option>
+                <option value="zh" class="bg-slate-900 text-white">中文 (Chinese)</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Developer Credits Banner -->
+    <section class="w-full max-w-xl glass-card rounded-2xl p-3 mb-5 border-l-4 border-l-amber-400 border-r-4 border-r-emerald-400 shadow-xl text-center relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+        <div class="absolute -left-10 -top-10 w-28 h-28 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+
+        <span id="txtBadge" class="text-[11px] font-bold text-amber-300 tracking-wide uppercase block">⚡ النظام الذكي الفائق للتشخيص الزراعي</span>
+        <h2 class="text-sm sm:text-base font-extrabold text-cyan-300 mt-1 flex items-center justify-center gap-2 flex-wrap">
+            <span id="txtDevLabel" class="text-slate-300">المطور والمهندس:</span>
+            <span id="txtDevName" class="text-amber-300 font-black underline decoration-amber-500/50 underline-offset-4">إسماعيل بسام حساسنة</span>
+            <span class="bg-gradient-to-r from-red-600 to-rose-700 text-white text-[10px] font-mono px-2 py-0.5 rounded-full shadow-sm">IBH AI</span>
+        </h2>
+    </section>
+
+    <!-- Main Interactive Card -->
+    <main class="w-full max-w-xl glass-card rounded-3xl p-5 sm:p-7 border border-slate-700/60 shadow-2xl relative glow-gold">
+        
+        <!-- Section Title & Subtitle -->
+        <div class="text-center mb-6">
+            <span class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-amber-400 via-emerald-400 to-cyan-400 rounded-2xl shadow-lg mb-3 text-slate-950 text-2xl font-black transform hover:rotate-6 transition">
+                <i class="fa-solid fa-microscope"></i>
+            </span>
+            <h2 id="txtMainHeading" class="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
+                فحص وتحليل أوراق النباتات
+            </h2>
+            <p id="txtSub" class="text-xs font-semibold text-cyan-300 mt-1">
+                محرك الرؤية الحاسوبية المعالج بـ C++ بتطوير ZINO & IBH
+            </p>
+        </div>
+
+        <!-- Upload Form -->
+        <form id="uploadForm" class="space-y-5">
+            <!-- Drag & Drop / Selection Area -->
+            <div id="dropZone" onclick="document.getElementById('imageInput').click()" 
+                 class="border-2 border-dashed border-cyan-400/50 hover:border-amber-400 bg-slate-900/60 hover:bg-slate-900/90 rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 relative group">
+                
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                
+                <div class="flex flex-col items-center pointer-events-none">
+                    <div class="flex gap-4 mb-3">
+                        <span class="w-12 h-12 bg-cyan-500/20 text-cyan-400 border border-cyan-400/40 rounded-2xl flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                            <i class="fa-solid fa-camera"></i>
+                        </span>
+                        <span class="w-12 h-12 bg-amber-500/20 text-amber-400 border border-amber-400/40 rounded-2xl flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+                            <i class="fa-solid fa-images"></i>
+                        </span>
+                    </div>
+                    <span id="txtUploadTitle" class="text-amber-300 font-extrabold text-sm sm:text-base">انقر أو اسحب صورة الورقة النباتية</span>
+                    <span id="txtUploadSub" class="text-xs text-slate-400 mt-1">دعم الكاميرا المباشرة ومعرض الصور</span>
+                </div>
+            </div>
+            
+            <!-- Image Preview Box -->
+            <div id="previewContainer" class="hidden relative group">
+                <img id="imagePreview" class="w-full h-56 object-cover rounded-2xl border-2 border-cyan-400/80 shadow-lg" alt="Leaf Preview" />
+                <button type="button" onclick="resetImage()" class="absolute top-2 right-2 bg-rose-600/90 hover:bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-md transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Submit / Analyze Button -->
+            <button type="button" onclick="analyzeImage()" id="btnSubmit" 
+                class="w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 hover:from-emerald-300 hover:to-cyan-400 text-slate-950 font-black text-base sm:text-lg py-4 rounded-2xl shadow-lg transition transform active:scale-98 flex items-center justify-center gap-2 border border-emerald-300/50 glow-emerald">
+                <i class="fa-solid fa-bolt text-slate-950"></i>
+                <span id="txtBtnAnalyze">تشخيص ومعالجة الورقة الآن</span>
+            </button>
+        </form>
+
+        <!-- Loader State -->
+        <div id="loader" class="hidden text-center my-6 py-6 bg-slate-900/90 rounded-2xl border border-cyan-500/40 animate-pulse-slow">
+            <i class="fa-solid fa-circle-notch fa-spin text-cyan-400 text-4xl mb-3"></i>
+            <p id="txtLoader" class="text-xs sm:text-sm text-amber-300 font-extrabold">جاري المعالجة بواسطة محرك C++ وفحص النسيج النباتي...</p>
+        </div>
+
+        <!-- Results Display Card -->
+        <div id="resultCard" class="hidden mt-6 bg-slate-900/90 p-5 rounded-2xl border-2 border-amber-400/80 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-black text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-square-poll-vertical text-amber-400"></i>
+                    <span id="txtResHeader">تقرير التقييم والتشخيص الزراعي</span>
+                </h3>
+                <span class="text-[10px] font-mono bg-amber-400 text-slate-950 font-black px-2.5 py-1 rounded-lg shadow">C++ ENGINE</span>
+            </div>
+
+            <!-- General Status -->
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                <span id="txtResStatus" class="text-xs text-slate-400 font-semibold">الحالة العامة:</span>
+                <span id="resStatus" class="font-black text-amber-300 text-sm sm:text-base"></span>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-emerald-500/30 text-center">
+                    <span id="txtResHealthy" class="text-[11px] text-emerald-400 font-bold block">النسيج السليم</span>
+                    <span id="resHealthy" class="text-lg font-black text-emerald-400 font-mono"></span>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-rose-500/30 text-center">
+                    <span id="txtResSeverity" class="text-[11px] text-rose-400 font-bold block">نسبة الإصابة</span>
+                    <span id="resSeverity" class="text-lg font-black text-rose-400 font-mono"></span>
+                </div>
+            </div>
+
+            <!-- Heatmap Visualization Output -->
+            <div class="pt-1">
+                <p id="txtResHeatmap" class="text-xs text-cyan-300 mb-2 font-bold flex items-center justify-between">
+                    <span>الخريطة الحرارية للإصابة (C++ Visual Output):</span>
+                    <span class="text-[10px] text-slate-400">(انقر التكبير)</span>
+                </p>
+                <div class="relative group cursor-pointer" onclick="openModal()">
+                    <img id="resImage" class="w-full h-52 object-cover rounded-xl border border-rose-500/60 shadow-md group-hover:opacity-90 transition" src="" alt="Analyzed Result">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-slate-950/50 rounded-xl">
+                        <i class="fa-solid fa-magnifying-glass-plus text-2xl text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Credit Banner -->
+    <footer class="mt-6 text-center">
+        <p id="txtFooter" class="text-xs font-black text-slate-900 bg-amber-300/90 px-4 py-1.5 rounded-full shadow-lg border border-amber-400">
+            ZINO AgroVision © 2026 | تطوير المهندس إسماعيل بسام حساسنة (IBH)
+        </p>
+    </footer>
+
+    <!-- Image Lightbox Modal -->
+    <div id="imgModal" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-4" onclick="closeModal()">
+        <div class="relative max-w-3xl w-full">
+            <img id="modalImg" class="w-full h-auto max-h-[85vh] object-contain rounded-2xl border-2 border-amber-400 shadow-2xl" src="" />
+            <p class="text-center text-slate-300 text-xs mt-2">انقر في أي مكان للإغلاق</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const translations = {
+            ar: {
+                dir: "rtl",
+                badge: "⚡ النظام الذكي الفائق للتشخيص الزراعي",
+                devLabel: "المطور والمهندس:",
+                devName: "إسماعيل بسام حساسنة",
+                mainHeading: "فحص وتحليل أوراق النباتات",
+                sub: "محرك الرؤية الحاسوبية المعالج بـ C++ بتطوير ZINO & IBH",
+                uploadTitle: "انقر أو اسحب صورة الورقة النباتية",
+                uploadSub: "دعم الكاميرا المباشرة ومعرض الصور",
+                btnAnalyze: "تشخيص ومعالجة الورقة الآن",
+                loader: "جاري المعالجة بواسطة محرك C++ وفحص النسيج النباتي...",
+                resHeader: "تقرير التقييم والتشخيص الزراعي",
+                resStatus: "الحالة العامة:",
+                resHealthy: "النسيج السليم",
+                resSeverity: "نسبة الإصابة",
+                resHeatmap: "الخريطة الحرارية للإصابة (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | تطوير المهندس إسماعيل بسام حساسنة (IBH)",
+                alertNoImg: "الرجاء اختيار أو التقاط صورة أولاً",
+                alertErr: "حدث خطأ أثناء الاتصال بمحرك التشخيص C++"
+            },
+            en: {
+                dir: "ltr",
+                badge: "⚡ Next-Gen AI Agricultural Diagnostic System",
+                devLabel: "Lead Engineer & Developer:",
+                devName: "Ismail Bassam Hasasneh",
+                mainHeading: "Plant Leaf Health Analysis",
+                sub: "C++ Computer Vision Engine Powered by ZINO & IBH",
+                uploadTitle: "Tap or drag leaf image here",
+                uploadSub: "Supports Live Camera & Gallery",
+                btnAnalyze: "Analyze & Process Leaf Now",
+                loader: "Processing image with C++ Vision Engine & Analyzing Tissue...",
+                resHeader: "Agricultural Diagnostic Report",
+                resStatus: "General Health Status:",
+                resHealthy: "Healthy Tissue",
+                resSeverity: "Infection Severity",
+                resHeatmap: "Infection Heatmap (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | Developed by Ismail Bassam Hasasneh (IBH)",
+                alertNoImg: "Please select or capture an image first",
+                alertErr: "Error communicating with C++ diagnostic engine"
+            },
+            ru: {
+                dir: "ltr",
+                badge: "⚡ Передовая система агродиагностики",
+                devLabel: "Разработчик и инженер:",
+                devName: "Исмаил Бассам Хасасна",
+                mainHeading: "Анализ здоровья листьев растений",
+                sub: "Движок C++ Компьютерного Зрения от ZINO & IBH",
+                uploadTitle: "Нажмите или перетащите фото листа",
+                uploadSub: "Поддержка камеры и галереи",
+                btnAnalyze: "Запустить анализ листа",
+                loader: "Обработка изображения движком C++ и анализ тканей...",
+                resHeader: "Отчет агродиагностики",
+                resStatus: "Общее состояние:",
+                resHealthy: "Здоровая ткань",
+                resSeverity: "Степень поражения",
+                resHeatmap: "Тепловая карта поражения (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | Разработано Исмаилом Бассам Хасасна (IBH)",
+                alertNoImg: "Пожалуйста, сначала выберите или сделайте фото",
+                alertErr: "Ошибка связи с диагностическим движком C++"
+            },
+            de: {
+                dir: "ltr",
+                badge: "⚡ KI-System für Landwirtschaftliche Diagnose",
+                devLabel: "Entwickler & Ingenieur:",
+                devName: "Ismail Bassam Hasasneh",
+                mainHeading: "Pflanzenblatt-Gesundheitsanalyse",
+                sub: "C++ Computer Vision Engine powered by ZINO & IBH",
+                uploadTitle: "Tippen oder Blattfoto hierher ziehen",
+                uploadSub: "Unterstützt Live-Kamera und Galerie",
+                btnAnalyze: "Blatt jetzt analysieren",
+                loader: "Verarbeitung mit C++ Vision Engine läuft...",
+                resHeader: "Landwirtschaftlicher Diagnosebericht",
+                resStatus: "Gesamtzustand:",
+                resHealthy: "Gesundes Gewebe",
+                resSeverity: "Infektionsgrad",
+                resHeatmap: "Infektions-Heatmap (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | Entwickelt von Ismail Bassam Hasasneh (IBH)",
+                alertNoImg: "Bitte wählen Sie zuerst ein Bild aus",
+                alertErr: "Fehler bei der Kommunikation mit der C++-Engine"
+            },
+            tr: {
+                dir: "ltr",
+                badge: "⚡ Gelişmiş Yapay Zeka Tarımsal Teşhis Sistemi",
+                devLabel: "Geliştirici ve Mühendis:",
+                devName: "Ismail Bassam Hasasneh",
+                mainHeading: "Bitki Yaprağı Sağlık Analizi",
+                sub: "ZINO & IBH Destekli C++ Bilgisayarlı Görme Motoru",
+                uploadTitle: "Yaprak resmini yüklemek için dokunun veya sürükleyin",
+                uploadSub: "Canlı Kamera ve Galeri Desteği",
+                btnAnalyze: "Yaprağı Şimdi Teşhis Et",
+                loader: "C++ Görsel Motoru ile işleniyor...",
+                resHeader: "Tarımsal Teşhis Raporu",
+                resStatus: "Genel Sağlık Durumu:",
+                resHealthy: "Sağlıklı Doku",
+                resSeverity: "Enfeksiyon Şiddeti",
+                resHeatmap: "Enfeksiyon Isı Haritası (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | Ismail Bassam Hasasneh (IBH) Tarafından Geliştirildi",
+                alertNoImg: "Lütfen önce bir fotoğraf seçin veya çekin",
+                alertErr: "C++ teşhis motoru ile bağlantı hatası"
+            },
+            zh: {
+                dir: "ltr",
+                badge: "⚡ 新一代智能农业诊断系统",
+                devLabel: "首席工程师与开发者：",
+                devName: "伊斯梅尔·巴萨姆·哈萨斯纳",
+                mainHeading: "植物叶片健康分析与检测",
+                sub: "ZINO & IBH 驱动的 C++ 计算机视觉引擎",
+                uploadTitle: "点击或拖拽上传叶片图片",
+                uploadSub: "支持实时相机与相册",
+                btnAnalyze: "立即诊断叶片健康",
+                loader: "正在使用 C++ 视觉引擎处理并分析组织...",
+                resHeader: "农业诊断与评估报告",
+                resStatus: "总体健康状况：",
+                resHealthy: "健康组织比例",
+                resSeverity: "病害严重程度",
+                resHeatmap: "病害热力图 (C++ Visual Output):",
+                footer: "ZINO AgroVision © 2026 | 由 Ismail Bassam Hasasneh (IBH) 开发",
+                alertNoImg: "请先选择或拍摄一张照片",
+                alertErr: "与 C++ 诊断引擎通信时出错"
+            }
+        };
+
+        let currentLang = 'ar';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+     
