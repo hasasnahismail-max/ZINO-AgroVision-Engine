@@ -1,0 +1,3 @@
+/workspaces/ZINO-AgroVision-Engine/build/CMakeFiles/zino_agro.dir
+/workspaces/ZINO-AgroVision-Engine/build/CMakeFiles/edit_cache.dir
+/workspaces/ZINO-AgroVision-Engine/build/CMakeFiles/rebuild_cache.dir
