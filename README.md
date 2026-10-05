@@ -39,7 +39,7 @@
 
 ```bash
 # Clone repository
-git clone [https://github.com/IsmailHasasna/ZINO-AgroVision-Engine.git](https://github.com/IsmailHasasna/ZINO-AgroVision-Engine.git)
+git clone https://github.com/IsmailHasasna/ZINO-AgroVision-Engine.git
 cd ZINO-AgroVision-Engine
 
 # Build and run project
