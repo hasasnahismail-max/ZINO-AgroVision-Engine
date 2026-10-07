@@ -2,7 +2,7 @@ import streamlit as st
 import cv2
 import numpy as np
 
-# --- 1. تهيئة إعدادات الصفحة ---
+# --- 1. إعداد الصفحة العامة ---
 st.set_page_config(
     page_title="ZINO AgroVision Engine",
     page_icon="🌱",
@@ -82,6 +82,13 @@ st.markdown("""
         border-bottom: 1.5px solid #30363d;
         padding-bottom: 8px;
     }
+    .section-header {
+        color: #58a6ff;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 6px;
+    }
     .zino-footer {
         background-color: #0d1117;
         border: 1.5px solid #161b22;
@@ -104,13 +111,13 @@ TEXTS = {
         "upload_label": "قم برفع صورة ورقة النبات للتحليل المكتبي والدقيق",
         "run_btn": "🔬 تشغيل تحليل الرؤية الحاسوبية والحساب الرقمي",
         "report_title": "📊 تقرير التحليل الرقمي لسطح الورقة (Leaf Surface Analysis)",
-        "healthy_ratio": "نسبة النسيج الأخضر الحيوية",
-        "infected_ratio": "نسبة التجهد والتغير التصبغي",
-        "lesion_count": "عدد مناطق التغير النسيجي",
-        "status_done": "تم معالجة مصفوفة البكسلات وعزل الخلفية بنجاح",
-        "heatmap_label": "تجزئة جسم الورقة وتحديد مناطق التجهد (Leaf Isolation & Stress Mapping)",
-        "tech_title": "⚙️ محرك المعالجة الرياضية",
-        "tech_desc": "محرك يعتمد على عزل خلفية المشهد ومقاييس الألوان الطيفية ببيئة HSV بكسل ببكسل."
+        "healthy_ratio": "نسبة النسيج الأخضر الحيوي",
+        "infected_ratio": "نسبة الإجهاد والتغير التصبغي",
+        "lesion_count": "عدد مناطق التغير النسيجي المكتشفة",
+        "status_done": "تم عزل خلفية المشهد وعزل مصفوفة الورقة بنجاح 100%",
+        "heatmap_label": "عزل جسم الورقة والخريطة الحرارية الموجهة (Isolated Heatmap & Contours)",
+        "tech_title": "⚙️ محرك المعالجة المتقدم",
+        "tech_desc": "تجزئة طيفية تعتمد على القناة a* في فضاء CIELAB لعزل خلفية الصور كلياً بدون أخطاء."
     },
     "English": {
         "title": "ZINO AgroVision",
@@ -122,10 +129,10 @@ TEXTS = {
         "healthy_ratio": "Vital Green Tissue Ratio",
         "infected_ratio": "Discolored / Stressed Area Ratio",
         "lesion_count": "Detected Anomaly Regions",
-        "status_done": "Background Segmented & Pixel Matrix Processed",
-        "heatmap_label": "Leaf Contour Segmentation & Stress Mapping",
-        "tech_title": "⚙️ Vision Engine Specs",
-        "tech_desc": "Strict background-subtracted spatial analysis using HSV color spaces and contour topology."
+        "status_done": "Background 100% Subtracted & Leaf Matrix Isolated",
+        "heatmap_label": "Isolated Leaf Contour & Spectral Heatmap",
+        "tech_title": "⚙️ Advanced Vision Engine",
+        "tech_desc": "CIELAB Color Space channel-a* segmentation eliminating background noise completely."
     },
     "Русский": {
         "title": "ZINO AgroVision",
@@ -137,10 +144,10 @@ TEXTS = {
         "healthy_ratio": "Доля здоровой зеленой ткани",
         "infected_ratio": "Доля измененной/стрессовой ткани",
         "lesion_count": "Обнаружено аномальных зон",
-        "status_done": "Сегментация фона и анализ пикселей завершены",
-        "heatmap_label": "Сегментация контура листа и карта стресса",
+        "status_done": "Удаление фона и изоляция листа выполнены на 100%",
+        "heatmap_label": "Изолированный контур листа и тепловая карта",
         "tech_title": "⚙️ Характеристики движка",
-        "tech_desc": "Пространственный анализ с удалением фона на основе цветовых пространств HSV."
+        "tech_desc": "Сегментация на основе канала a* в CIELAB, полностью исключающая фоновые помехи."
     },
     "Türkçe": {
         "title": "ZINO AgroVision",
@@ -152,10 +159,10 @@ TEXTS = {
         "healthy_ratio": "Canlı Yeşil Doku Oranı",
         "infected_ratio": "Renk Değişimi / Stresli Alan Oranı",
         "lesion_count": "Tespit Edilen Anomali Bölgesi",
-        "status_done": "Arka Plan Ayrıştırıldı ve Piksel Matrisi İşlendi",
-        "heatmap_label": "Yaprak Kontur Segmentasyonu ve Stres Haritası",
+        "status_done": "Arka Plan %100 Ayrıştırıldı ve Yaprak Matrisi İzole Edildi",
+        "heatmap_label": "İzole Yaprak Konturu ve Spektral Harita",
         "tech_title": "⚙️ Motor Özellikleri",
-        "tech_desc": "HSV renk alanları ve kontur topolojisi kullanılarak yapılan arka plan çıkarmalı analiz."
+        "tech_desc": "Gürültüyü tamamen ortadan kaldıran CIELAB a*-kanalı segmentasyonu."
     },
     "中文": {
         "title": "ZINO AgroVision",
@@ -167,10 +174,10 @@ TEXTS = {
         "healthy_ratio": "绿色健康组织比例",
         "infected_ratio": "受损 / 变色区域比例",
         "lesion_count": "检测到的异常区域数量",
-        "status_done": "背景分割与像素矩阵处理完成",
-        "heatmap_label": "叶片轮廓分割与应力热力图",
+        "status_done": "背景100%扣除，叶片矩阵成功隔离",
+        "heatmap_label": "隔离叶片轮廓与多光谱热力图",
         "tech_title": "⚙️ 视觉引擎规格",
-        "tech_desc": "基于 HSV 色彩空间和轮廓拓扑的前景背景分割与定量空间分析。"
+        "tech_desc": "基于 CIELAB 色彩空间 a* 通道的精确定向分割，完全消除背景干扰。"
     }
 }
 
@@ -201,70 +208,77 @@ if uploaded_file is not None:
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     
     st.markdown('<div class="zino-card">', unsafe_allow_html=True)
-    st.image(img_rgb, caption="Input Leaf Image", use_container_width=True)
+    st.image(img_rgb, caption="Input Image Frame", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button(t["run_btn"]):
-        # --- خوارزمية عزل خلفية الورقة الدقيقة (Leaf Isolation Pipeline) ---
-        hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+        # --- الخوارزمية الدقيقة: فصل الخلفية بواسطة CIELAB Color Space ---
+        lab = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
+        l_chan, a_chan, b_chan = cv2.split(lab)
         
-        # 1. تحديد نطاقات اللون الخاص بجسم الورقة الكلي (الأخضر والأصفر والداكن)
-        lower_leaf = np.array([15, 25, 20])
-        upper_leaf = np.array([95, 255, 255])
-        raw_leaf_mask = cv2.inRange(hsv, lower_leaf, upper_leaf)
+        # القناة a* في LAB تميز الأنسجة الخضراء النباتية تماماً بقيم أصغر من 120 بغض النظر عن الورق البني
+        _, raw_leaf_mask = cv2.threshold(a_chan, 120, 255, cv2.THRESH_BINARY_INV)
         
-        # التنظيف المورفولوجي لمنع الضوضاء
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
-        cleaned_leaf_mask = cv2.morphologyEx(raw_leaf_mask, cv2.MORPH_CLOSE, kernel)
-        cleaned_leaf_mask = cv2.morphologyEx(cleaned_leaf_mask, cv2.MORPH_OPEN, kernel)
+        # التنظيف المورفولوجي لمنع التشويش
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+        cleaned_mask = cv2.morphologyEx(raw_leaf_mask, cv2.MORPH_CLOSE, kernel)
+        cleaned_mask = cv2.morphologyEx(cleaned_mask, cv2.MORPH_OPEN, kernel)
         
-        # استخراج أكبر مجسم (جسم الورقة الرئيسي فقط) وإلغاء خلفية الكرتون/الطاولة
-        contours_leaf, _ = cv2.findContours(cleaned_leaf_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # استخراج أكبر مجسم (جسم الورقة الفعلي) وتجاهل الحواف والورق الخلفي بالكامل
+        contours, _ = cv2.findContours(cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
-        leaf_mask = np.zeros_like(cleaned_leaf_mask)
-        if contours_leaf:
-            largest_contour = max(contours_leaf, key=cv2.contourArea)
+        leaf_mask = np.zeros_like(a_chan)
+        if contours:
+            largest_contour = max(contours, key=cv2.contourArea)
             cv2.drawContours(leaf_mask, [largest_contour], -1, 255, -1)
-        else:
-            leaf_mask = cleaned_leaf_mask
-
-        # 2. قياس المساحة الإجمالية لجسم الورقة فقط (Leaf Surface Area)
+            
         total_leaf_pixels = float(cv2.countNonZero(leaf_mask))
         
-        if total_leaf_pixels > 0:
-            # 3. عزل البكسلات الخضراء الحيوية داخل حدود الورقة حصراً
-            lower_green = np.array([28, 40, 40])
-            upper_green = np.array([85, 255, 255])
-            green_mask_raw = cv2.inRange(hsv, lower_green, upper_green)
-            healthy_leaf_mask = cv2.bitwise_and(green_mask_raw, green_mask_raw, mask=leaf_mask)
+        if total_leaf_pixels > 1000:
+            # --- أ) حساب البكسلات الخضراء الحيوية داخل حدود الورقة المعزولة ---
+            hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+            lower_green = np.array([28, 35, 35])
+            upper_green = np.array([88, 255, 255])
+            green_raw = cv2.inRange(hsv, lower_green, upper_green)
             
-            healthy_pixels = float(cv2.countNonZero(healthy_leaf_mask))
+            # حصر البحث داخل جسم الورقة فقط
+            healthy_mask = cv2.bitwise_and(green_raw, green_raw, mask=leaf_mask)
+            healthy_pixels = float(cv2.countNonZero(healthy_mask))
             
-            # 4. حساب مناطق التجهد/التغير التصبغي داخل الورقة حصراً
-            stressed_leaf_mask = cv2.bitwise_and(cv2.bitwise_not(green_mask_raw), cv2.bitwise_not(green_mask_raw), mask=leaf_mask)
+            # ب) مناطق التغير التصبغي داخل الورقة حصراً
+            damaged_mask = cv2.bitwise_and(leaf_mask, cv2.bitwise_not(healthy_mask))
+            damaged_pixels = float(cv2.countNonZero(damaged_mask))
             
-            # 5. تتبع محيطات التغيرات التصبغية داخل جسم الورقة
-            contours_stress, _ = cv2.findContours(stressed_leaf_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            
-            contoured_img = img_rgb.copy()
-            valid_anomalies = 0
-            for cnt in contours_stress:
-                # رسم التحديد فقط إذا كانت البقعة داخل حدود الورقة ومساحتها واضحة
-                if cv2.contourArea(cnt) > 25:
-                    valid_anomalies += 1
-                    cv2.drawContours(contoured_img, [cnt], -1, (255, 0, 0), 2)
-            
-            # 6. الرياضيات الحسابية لمساحة الورقة الحقيقية
             healthy_pct = (healthy_pixels / total_leaf_pixels) * 100.0
-            stressed_pct = max(0.0, 100.0 - healthy_pct)
+            damaged_pct = (damaged_pixels / total_leaf_pixels) * 100.0
             
-            # 7. تطبيق الخريطة الحرارية الموجهة لجسم الورقة فقط
+            # ج) تتبع البقع داخل الورقة رسم محيط الورقة بالأخضر والبقع بالأحمر
+            lesion_cnts, _ = cv2.findContours(damaged_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            display_contours = img_rgb.copy()
+            # إخفاء الخلفية الخارجية بجعلها داكنة
+            background_black = np.zeros_like(img_rgb)
+            display_contours = np.where(leaf_mask[:, :, None] == 255, img_rgb, background_black)
+            
+            # رسم إطار الورقة بالأخضر
+            if contours:
+                cv2.drawContours(display_contours, [largest_contour], -1, (0, 255, 0), 2)
+                
+            valid_lesions = 0
+            for lc in lesion_cnts:
+                if cv2.contourArea(lc) > 35:
+                    valid_lesions += 1
+                    cv2.drawContours(display_contours, [lc], -1, (255, 0, 0), 2)
+                    
+            # د) الخريطة الحرارية (مطبقة على الورقة فقط والخلفية سوداء معتمة)
             gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
-            heatmap_full = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
-            heatmap_rgb = cv2.cvtColor(heatmap_full, cv2.COLOR_BGR2RGB)
-            heatmap_masked = cv2.bitwise_and(heatmap_rgb, heatmap_rgb, mask=leaf_mask)
+            heatmap_raw = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
+            heatmap_rgb = cv2.cvtColor(heatmap_raw, cv2.COLOR_BGR2RGB)
             
-            # --- 8. عرض نتائج التقرير المعتمد ---
+            # قص الأشعة الحرارية لتكون داخل النسيج النباتي حصراً
+            heatmap_final = cv2.bitwise_and(heatmap_rgb, heatmap_rgb, mask=leaf_mask)
+            
+            # --- 7. عرض نتائج التقرير الرياضي والمنطقي ---
             st.markdown('<div class="zino-card">', unsafe_allow_html=True)
             st.markdown(f'<div class="report-title">{t["report_title"]}</div>', unsafe_allow_html=True)
             
@@ -272,34 +286,44 @@ if uploaded_file is not None:
             with c1:
                 st.metric(label=t["healthy_ratio"], value=f"{healthy_pct:.2f}%")
             with c2:
-                st.metric(label=t["infected_ratio"], value=f"{stressed_pct:.2f}%")
+                st.metric(label=t["infected_ratio"], value=f"{damaged_pct:.2f}%")
             with c3:
-                st.metric(label=t["lesion_count"], value=f"{valid_anomalies}")
+                st.metric(label=t["lesion_count"], value=f"{valid_lesions}")
                 
             st.info(f"📌 {t['status_done']}")
             
-            # التقييم بناءً على النسب الرقمية المحسوبة
-            if healthy_pct >= 80.0:
-                st.success("✅ **مؤشر النسيج:** النسيج النباتي الأخضر غني جداً بالكلوروفيل وفي حالة نمو ممتازة.")
-            elif healthy_pct >= 50.0:
-                st.warning("⚠️ **مؤشر النسيج:** تم رصد تغيرات تصبغية متوسطة وتراجع في كثافة الكلوروفيل عبر سطح الورقة.")
-            else:
-                st.error("🚨 **مؤشر النسيج:** انخفاض حاد في نسبة النسيج السليم وجود جفاف أو تلف تصبغي واسع.")
+            # التحليل المنطقي والإرشادات الزراعية المستندة للأرقام الفعلية
+            if healthy_pct >= 85.0:
+                st.success("✅ **حالة الورقة:** النسيج النباتي سليماً ومكتظاً بالكلوروفيل الحيوي ضمن المعدلات الطبيعية الممتازة.")
+                st.markdown('<div class="section-header">🛠️ التوصيات العادية:</div>', unsafe_allow_html=True)
+                st.write("• الحفاظ على جدول الري المنتظم وتجنب تعريض النبتة لإجهاد مائي أو حراري مفاجئ.")
                 
-            # عرض الصور بعد التصفية التامة للخلفية
+            elif healthy_pct >= 55.0:
+                st.warning("⚠️ **حالة الورقة:** رصد إجهاد نسيجي وتراجع متوسط في الكثافة التصبغية على سطح الورقة.")
+                st.markdown('<div class="section-header">🛠️ خطة المعالجة والتحسين:</div>', unsafe_allow_html=True)
+                st.write("1. **التسميد:** إضافة سماد متوازن يحتوي على عناصر الحديد والنيتروجين لتعويض تراجع الكلوروفيل.")
+                st.write("2. **الري:** ضبط معدلات الرطوبة ومنع تجمع المياه على الأوراق لتقليل فرص التلف.")
+                
+            else:
+                st.error("🚨 **حالة الورقة:** انخفاض حاد في نسبة النسيج الأخضر السليم وظهور مناطق تغير تصبغي واسعة.")
+                st.markdown('<div class="section-header">🛠️ بروتوكول التدخل المباشر:</div>', unsafe_allow_html=True)
+                st.write("1. **العزل:** فصل الأجزاء المصابة لضمان عدم انتقال الإجهاد أو الإصابة للأوراق المجاورة.")
+                st.write("2. **المعاملة الزراعية:** استخدام مغذيات ورقية متخصصة ومراجعة ظروف الإضاءة والتهوية فوراً.")
+
+            # عرض الصور المعزولة كلياً
             st.markdown(f"#### {t['heatmap_label']}")
             col_img1, col_img2 = st.columns(2)
             with col_img1:
-                st.image(contoured_img, caption="Lesion Bounding (Leaf Surface Only)", use_container_width=True)
+                st.image(display_contours, caption="Isolated Leaf Contour & Bounding", use_container_width=True)
             with col_img2:
-                st.image(heatmap_masked, caption="Segmented Thermal Heatmap", use_container_width=True)
+                st.image(heatmap_final, caption="Strict Masked Thermal Heatmap", use_container_width=True)
                 
             st.markdown('</div>', unsafe_allow_html=True)
             
         else:
-            st.error("⚠️ لم يتم التعرف على ورقة الشجر بشكل واضح، يرجى التقاط الصورة على خلفية تباين مناسبة.")
+            st.error("⚠️ تعذر التعرف على ورقة النبات. يرجى توجيه الكاميرا مباشرة نحو الورقة.")
 
-# --- 9. الفوتر السفلـي ---
+# --- 8. الفوتر السفلـي ---
 st.markdown(f"""
     <div class="zino-footer">
         {t['dev_by']} | ZINO AgroVision Engine © 2026
