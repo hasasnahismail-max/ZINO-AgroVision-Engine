@@ -2,7 +2,7 @@ import streamlit as st
 import cv2
 import numpy as np
 
-# --- 1. تهيئة الصفحة العامة ---
+# --- 1. إعداد الصفحة وتحديد الأيقونة الرسمية للتطبيق ---
 st.set_page_config(
     page_title="ZINO AgroVision Engine",
     page_icon="🫒",
@@ -10,19 +10,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. رمز أيقونة شجرة الزيتون والكاميرا المدمج برمجياً (SVG) ---
+# --- 2. رمز الأيقونة المدمج برمجياً (Olive Tree Camera Icon) ---
 OLIVE_CAM_SVG = """
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="65" height="65" style="border-radius: 50%; border: 2px solid #f1c40f; background: #0d1117; padding: 4px; box-shadow: 0px 4px 10px rgba(0,0,0,0.5);">
+  <!-- جذع شجرة الزيتون -->
   <path d="M 45,90 C 40,70 35,55 42,42 C 48,32 52,32 58,42 C 65,55 60,70 55,90 Z" fill="#795548"/>
   <path d="M 40,85 C 32,88 25,92 20,95 M 60,85 C 68,88 75,92 80,95" stroke="#5d4037" stroke-width="4" stroke-linecap="round"/>
+  <!-- أوراق شجرة الزيتون -->
   <circle cx="35" cy="30" r="16" fill="#2e7d32"/>
   <circle cx="65" cy="30" r="16" fill="#2e7d32"/>
   <circle cx="50" cy="20" r="18" fill="#388e3c"/>
   <circle cx="28" cy="40" r="12" fill="#1b5e20"/>
   <circle cx="72" cy="40" r="12" fill="#1b5e20"/>
+  <!-- حبات الزيتون الذهبية -->
   <ellipse cx="32" cy="25" rx="3" ry="5" fill="#fbc02d"/>
   <ellipse cx="68" cy="25" rx="3" ry="5" fill="#fbc02d"/>
   <ellipse cx="50" cy="14" rx="3" ry="5" fill="#fbc02d"/>
+  <!-- الكاميرا الاحترافية بين يدي شجرة الزيتون -->
   <rect x="36" y="48" width="28" height="20" rx="3" fill="#212121" stroke="#f1c40f" stroke-width="1.5"/>
   <circle cx="50" cy="58" r="6" fill="#424242" stroke="#ffffff" stroke-width="1.5"/>
   <circle cx="50" cy="58" r="3" fill="#00bcd4"/>
@@ -36,7 +40,7 @@ st.markdown("""
     <style>
     .stApp {
         background-color: #f1c40f !important;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-family: 'Segoe UI', Roboto, sans-serif;
     }
     .zino-header {
         background-color: #0d1117;
@@ -131,15 +135,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. القاموس الخماسي الموحد للغات الخمس (I18N) ---
+# --- 4. القاموس الموحد للغات الخمس (I18N الشامل) ---
 TEXTS = {
     "العربية": {
         "title": "ZINO AgroVision",
         "subtitle": "Advanced Agricultural Vision Engine | Quantitative Leaf Surface Diagnostics",
         "dev_by": "تصميم وتطوير إسماعيل حساسنة",
-        "olive_cam_title": "كاميرا شجرة الزيتون الذكية - طرق الإدخال المخصصة للأوراق والشجر:",
-        "input_mode": "اختر طريقة الإدخال المناسبة لعدم كشف ألبوم الصور الشخصية:",
-        "sample_select": "🍃 اختر عينة ورقة شجر جاهزة للتجربة وتسجيل الشاشة:",
+        "olive_cam_title": "كاميرا شجرة الزيتون الذكية - التقط صورة أوراق الشجر والنباتات حصراً:",
+        "input_mode": "اختر طريقة إدخال صورة الورق والشجر:",
         "cam_label": "وجه الكاميرا نحو ورقة الشجر والتقط الصورة 🫒📷",
         "upload_label": "أو اختر صورة ورقة شجر مخزنة من المعرض 🍃📁",
         "run_btn": "🔬 تشغيل تحليل الرؤية الحاسوبية والحساب الرقمي",
@@ -162,15 +165,14 @@ TEXTS = {
         "rec_title_danger": "🛠️ بروتوكول التدخل المباشر:",
         "rec_danger_1": "1. **العزل:** فصل الأجزاء المصابة لضمان عدم انتقال الإجهاد أو الإصابة للأوراق المجاورة.",
         "rec_danger_2": "2. **المعاملة الزراعية:** استخدام مغذيات ورقية متخصصة ومراجعة ظروف الإضاءة والتهوية فوراً.",
-        "invalid_leaf_err": "🚨 **الصورة غير مطابقة!** لم يتم التعرف على ورقة شجر أو نسيج نباتي واضح (المحرك يمنع تحليل الأجسام الغريبة مثل الأشخاص أو السيارات)."
+        "invalid_leaf_err": "🚨 **الصورة غير مطابقة!** لم يتم التعرف على ورقة شجر أو نسيج نباتي واضح. يرجى تصوير أوراق الشجر والنباتات فقط (المحرك يمنع تحليل الأجسام الغريبة مثل الأشخاص، السيارات، أو الأثاث)."
     },
     "English": {
         "title": "ZINO AgroVision",
         "subtitle": "Advanced Agricultural Vision Engine | Quantitative Leaf Surface Diagnostics",
         "dev_by": "Designed and Developed by Ismail Hassasneh",
-        "olive_cam_title": "Olive Tree Vision Cam - Leaf & Tree Specialized Input Methods:",
-        "input_mode": "Select Input Mode (Prevents exposing personal gallery):",
-        "sample_select": "🍃 Select Built-in Leaf Sample for Screen Recording & Demo:",
+        "olive_cam_title": "Olive Tree Vision Cam - Strictly Capture Leaf & Tree Images Only:",
+        "input_mode": "Select Leaf Image Input Method:",
         "cam_label": "Point Camera at Leaf & Capture Image 🫒📷",
         "upload_label": "Or Select Leaf Image from Gallery 🍃📁",
         "run_btn": "🔬 Run Computer Vision & Pixel Analysis Engine",
@@ -193,15 +195,14 @@ TEXTS = {
         "rec_title_danger": "🛠️ Direct Intervention Protocol:",
         "rec_danger_1": "1. **Isolate:** Remove affected foliage to prevent stress transmission to adjacent leaves.",
         "rec_danger_2": "2. **Foliar Treatment:** Apply specialized foliar nutrients and re-evaluate light and ventilation.",
-        "invalid_leaf_err": "🚨 **Invalid Image!** No valid leaf detected (Engine excludes non-plant objects)."
+        "invalid_leaf_err": "🚨 **Invalid Image!** No valid leaf or plant tissue detected. Please capture plant leaves or trees only (Engine excludes non-plant objects like humans, cars, or clutter)."
     },
     "Русский": {
         "title": "ZINO AgroVision",
         "subtitle": "Система компьютерного зрения | Количественная диагностика поверхности листа",
         "dev_by": "Дизайн и разработка: Исмаил Хассасне",
-        "olive_cam_title": "Камера Olive Vision - Специализированный ввод для листьев:",
-        "input_mode": "Выберите режим ввода (защита личной галереи):",
-        "sample_select": "🍃 Выберите образец листа для записи экрана:",
+        "olive_cam_title": "Камера Olive Vision - Сделайте снимок исключительно листьев или деревьев:",
+        "input_mode": "Выберите способ ввода изображения листа:",
         "cam_label": "Направьте камеру на лист и сделайте снимок 🫒📷",
         "upload_label": "Или выберите изображение листа из галереи 🍃📁",
         "run_btn": "🔬 Запустить компьютерный анализ пикселей",
@@ -212,7 +213,7 @@ TEXTS = {
         "status_done": "Удаление фона и изоляция листа выполнены на 100%",
         "heatmap_label": "Изолированный контур листа и тепловая карта",
         "tech_title": "⚙️ Характеристики движка",
-        "tech_desc": "Сегментация на основе канала a* в CIELAB, полностью исключающая фоновые помехи.",
+        "tech_desc": "Сегментация на основе канала a* в CIELAB, полностью исключающая фоновые помехи и посторонние объекты.",
         "status_healthy": "✅ **Состояние листа:** Ткани полностью здоровы и насыщены хлорофиллом.",
         "rec_title_normal": "🛠️ Обычные рекомендации:",
         "rec_normal": "• Поддерживайте регулярный полив и защищайте растение от теплового стресса.",
@@ -224,15 +225,14 @@ TEXTS = {
         "rec_title_danger": "🛠️ Протокол вмешательства:",
         "rec_danger_1": "1. **Изоляция:** Удалите пораженные листья для защиты соседних побегов.",
         "rec_danger_2": "2. **Обработка:** Примените специальные листовые подкормки и проверьте вентиляцию.",
-        "invalid_leaf_err": "🚨 **Недействительное изображение!** Пожалуйста, используйте только снимки листьев."
+        "invalid_leaf_err": "🚨 **Недействительное изображение!** Лист или растительная ткань не обнаружены. Пожалуйста, фотографируйте только листья деревьев или растений."
     },
     "Türkçe": {
         "title": "ZINO AgroVision",
         "subtitle": "Gelişmiş Tarımsal Görme Motoru | Nicel Yaprak Yüzeyi Teşhisi",
         "dev_by": "Tasarım ve Geliştirme: İsmail Hassasneh",
-        "olive_cam_title": "Zeytin Ağacı Kamerası - Özel Yaprak Giriş Yöntemleri:",
-        "input_mode": "Giriş Yöntemini Seçin (Kişisel galeriyi korur):",
-        "sample_select": "🍃 Ekran Kaydı İçin Dahili Yaprak Örneği Seçin:",
+        "olive_cam_title": "Zeytin Ağacı Kamerası - Sadece Yaprak ve Ağaç Resimleri Çekin:",
+        "input_mode": "Yaprak Resmi Giriş Yöntemini Seçin:",
         "cam_label": "Kamerayı Yaprağa Yöneltin ve Çekin 🫒📷",
         "upload_label": "Veya Galeriden Yaprak Resmi Seçin 🍃📁",
         "run_btn": "🔬 Bilgisayarlı Görme ve Piksel Analizini Çalıştır",
@@ -243,7 +243,7 @@ TEXTS = {
         "status_done": "Arka Plan %100 Ayrıştırıldı ve Yaprak Matrisi İzole Edildi",
         "heatmap_label": "İzole Yaprak Konturu ve Spektral Harita",
         "tech_title": "⚙️ Motor Özellikleri",
-        "tech_desc": "Gürültüyü tamamen ortadan kaldıran CIELAB a*-kanalı segmentasyonu.",
+        "tech_desc": "Gürültüyü tamamen ortadan kaldıran ve yabancı nesneleri filtreleyen CIELAB a*-kanalı segmentasyonu.",
         "status_healthy": "✅ **Yaprak Sağlığı:** Bitki dokusu son derece sağlıklı ve klorofil açısından zengindir.",
         "rec_title_normal": "🛠️ Standart Bakım:",
         "rec_normal": "• Düzenli sulama programını koruyun ve bitkiyi ani ısı stresinden koruyun.",
@@ -255,15 +255,14 @@ TEXTS = {
         "rec_title_danger": "🛠️ Doğrudan Müdahale Protokolü:",
         "rec_danger_1": "1. **İzolasyon:** Stresin yakındaki yapraklara yayılmasını önlemek için etkilenen kısımları ayırın.",
         "rec_danger_2": "2. **Yaprak Tedavisi:** Özel yaprak besinleri uygulayın ve ışık/havalandırmayı gözden geçirin.",
-        "invalid_leaf_err": "🚨 **Geçersiz Görsel!** Lütfen sadece bitki yaprakları görseli kullanın."
+        "invalid_leaf_err": "🚨 **Geçersiz Görsel!** Yaprak veya bitki dokusu tespit edilemedi. Lütfen sadece bitki yaprakları veya ağaçlar çekin."
     },
     "中文": {
         "title": "ZINO AgroVision",
         "subtitle": "高级农业视觉引擎 | 叶片表面定量诊断",
         "dev_by": "设计与开发：Ismail Hassasneh",
-        "olive_cam_title": "橄榄树智能相机 - 树叶专用输入模式：",
-        "input_mode": "选择输入模式（防止暴露个人相册）：",
-        "sample_select": "🍃 选择内置树叶样本（适合录屏与演示）：",
+        "olive_cam_title": "橄榄树智能相机 - 仅限拍摄树叶与植物图像：",
+        "input_mode": "选择叶片图像输入方式：",
         "cam_label": "对准树叶拍摄图像 🫒📷",
         "upload_label": "或从图库选择叶片图像 🍃📁",
         "run_btn": "🔬 运行计算机视觉与像素分析引擎",
@@ -286,7 +285,7 @@ TEXTS = {
         "rec_title_danger": "🛠️ 直接干预协议：",
         "rec_danger_1": "1. **隔离：** 剪除严重受损部位，防止应力或病变蔓延至邻近叶片。",
         "rec_danger_2": "2. **叶面治疗：** 喷施专用叶面营养剂，重新评估光照与通风条件。",
-        "invalid_leaf_err": "🚨 **无效图像！** 请仅使用植物叶片图像。"
+        "invalid_leaf_err": "🚨 **无效图像！** 未检测到有效的树叶或植物组织。请仅拍摄植物叶片或树木（引擎将自动排除人、车或杂物等非植物对象）。"
     }
 }
 
@@ -309,21 +308,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# --- 7. منشئ عينات الأوراق لتسهيل العرض وتسجيل الشاشة ---
-def generate_sample_leaf(sample_type):
-    img = np.zeros((400, 400, 3), dtype=np.uint8)
-    img[:] = (200, 180, 160)
-    if sample_type == "healthy_olive":
-        cv2.ellipse(img, (200, 200), (60, 160), 15, 0, 360, (30, 140, 40), -1)
-        cv2.line(img, (200, 40), (200, 360), (20, 100, 30), 3)
-    elif sample_type == "spot_leaf":
-        cv2.ellipse(img, (200, 200), (120, 140), 0, 0, 360, (35, 130, 45), -1)
-        cv2.circle(img, (160, 160), 22, (20, 40, 180), -1)
-        cv2.circle(img, (240, 220), 18, (20, 40, 180), -1)
-        cv2.circle(img, (190, 260), 25, (20, 40, 180), -1)
-    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-# --- 8. حاوية الكاميرا وطرق الإدخال المخصصة 🫒📸 ---
+# --- 7. حاوية الكاميرا مع الأيقونة البرمجية المدمجة 🫒📸 ---
 st.markdown('<div class="olive-cam-container">', unsafe_allow_html=True)
 
 col_icon, col_txt = st.columns([1, 6])
@@ -332,52 +317,30 @@ with col_icon:
 with col_txt:
     st.markdown(f"<h4 style='margin-top: 10px;'>{t['olive_cam_title']}</h4>", unsafe_allow_html=True)
 
-input_type = st.radio(t["input_mode"], [
-    "🍃 Demo Leaf Gallery (لتسجيل الشاشة بدون فتح المعرض الشخصي)",
-    "🫒 Live Olive-Cam (الكاميرا المباشرة)",
-    "📁 File Storage (رفع ملف من الجهاز)"
-], horizontal=False)
+input_type = st.radio(t["input_mode"], ["🫒 Live Olive-Cam", "🍃 Leaf File Storage"], horizontal=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 uploaded_file = None
-selected_sample_img = None
-
-if "Demo Leaf Gallery" in input_type:
-    sample_choice = st.selectbox(t["sample_select"], [
-        "ورقة زيتون سليمة (Healthy Olive Leaf)",
-        "ورقة بها بقع وتجهد نسيجي (Leaf with Lesions)"
-    ])
-    if "Healthy" in sample_choice or "سليمة" in sample_choice:
-        selected_sample_img = generate_sample_leaf("healthy_olive")
-    else:
-        selected_sample_img = generate_sample_leaf("spot_leaf")
-elif "Olive-Cam" in input_type:
+if "Olive-Cam" in input_type:
     uploaded_file = st.camera_input(t["cam_label"])
 else:
     uploaded_file = st.file_uploader(t["upload_label"], type=["jpg", "jpeg", "png"])
 
-st.markdown('</div>', unsafe_allow_html=True)
-
-# تجهيز صورة الفحص
-img_rgb = None
-if selected_sample_img is not None:
-    img_rgb = selected_sample_img
-    img_bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
-elif uploaded_file is not None:
+if uploaded_file is not None:
     file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
     img_bgr = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-    if img_bgr is not None:
-        img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-
-if img_rgb is not None:
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    
     st.markdown('<div class="zino-card">', unsafe_allow_html=True)
     st.image(img_rgb, caption="Input Image Frame", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button(t["run_btn"]):
-        # --- الفحص الصارم للنسيج النباتي وعزل الأجسام الغريبة ---
+        # --- الفحص الصارم لوجود النسيج النباتي (Plant/Leaf Strict Check) ---
         lab = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
         l_chan, a_chan, b_chan = cv2.split(lab)
         
+        # القناة a* تفرق النسيج النباتي عن السيارات والأشخاص والأبنية
         _, raw_leaf_mask = cv2.threshold(a_chan, 120, 255, cv2.THRESH_BINARY_INV)
         
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
@@ -394,9 +357,33 @@ if img_rgb is not None:
         total_leaf_pixels = float(cv2.countNonZero(leaf_mask))
         total_img_pixels = float(img_bgr.shape[0] * img_bgr.shape[1])
         leaf_coverage_ratio = (total_leaf_pixels / total_img_pixels) * 100.0
-
-    if total_leaf_pixels > 1000 and leaf_coverage_ratio > 1.5:
-        hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
-        lower_green = np.array([28, 35, 35])
-        upper_green = np.array([88, 255, 255])
-        green_raw = cv2.inRange(hsv, lower_green, upper_green)
+        
+        # شرط الصرامة: يجب أن تحتوي الصورة على نسيج نباتي حقيقي (أكثر من 2% من مساحة الصورة)
+        if total_leaf_pixels > 1200 and leaf_coverage_ratio > 2.0:
+            hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+            lower_green = np.array([28, 35, 35])
+            upper_green = np.array([88, 255, 255])
+            green_raw = cv2.inRange(hsv, lower_green, upper_green)
+            
+            healthy_mask = cv2.bitwise_and(green_raw, green_raw, mask=leaf_mask)
+            healthy_pixels = float(cv2.countNonZero(healthy_mask))
+            
+            damaged_mask = cv2.bitwise_and(leaf_mask, cv2.bitwise_not(healthy_mask))
+            damaged_pixels = float(cv2.countNonZero(damaged_mask))
+            
+            healthy_pct = (healthy_pixels / total_leaf_pixels) * 100.0
+            damaged_pct = (damaged_pixels / total_leaf_pixels) * 100.0
+            
+            lesion_cnts, _ = cv2.findContours(damaged_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            background_black = np.zeros_like(img_rgb)
+            display_contours = np.where(leaf_mask[:, :, None] == 255, img_rgb, background_black)
+            
+            if contours:
+                cv2.drawContours(display_contours, [largest_contour], -1, (0, 255, 0), 2)
+                
+            valid_lesions = 0
+            for lc in lesion_cnts:
+                if cv2.contourArea(lc) > 35:
+                    valid_lesions += 1
+                    c
