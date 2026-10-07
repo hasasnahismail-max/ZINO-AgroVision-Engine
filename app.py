@@ -101,7 +101,7 @@ st.markdown(
         margin-top: 25px;
     }
     </style>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
@@ -126,9 +126,7 @@ TEXTS = {
         "healthy_ratio": "نسبة النسيج الأخضر الحيوي",
         "infected_ratio": "نسبة الإجهاد والتغير التصبغي",
         "lesion_count": "عدد مناطق التغير النسيجي المكتشفة",
-        "status_done": (
-            "تم عزل خلفية المشهد وعزل مصفوفة الورقة بنجاح 100%"
-        ),
+        "status_done": "تم عزل خلفية المشهد وعزل مصفوفة الورقة بنجاح 100%",
         "status_error": (
             "⚠️ تعذر التعرف على ورقة النبات. يرجى توجيه الكاميرا مباشرة نحو"
             " الورقة."
@@ -195,9 +193,7 @@ TEXTS = {
         "healthy_ratio": "Vital Green Tissue Ratio",
         "infected_ratio": "Discolored / Stressed Area Ratio",
         "lesion_count": "Detected Anomaly Regions",
-        "status_done": (
-            "Background 100% Subtracted & Leaf Matrix Isolated"
-        ),
+        "status_done": "Background 100% Subtracted & Leaf Matrix Isolated",
         "status_error": (
             "⚠️ Could not identify leaf tissue. Please point camera or upload a"
             " clear image."
@@ -261,16 +257,12 @@ TEXTS = {
         "healthy_ratio": "Доля здоровой зеленой ткани",
         "infected_ratio": "Доля измененной/стрессовой ткани",
         "lesion_count": "Обнаружено аномальных зон",
-        "status_done": (
-            "Удаление фона и изоляция листа выполнены на 100%"
-        ),
+        "status_done": "Удаление фона и изоляция листа выполнены на 100%",
         "status_error": (
             "⚠️ Не удалось распознать лист. Направьте камеру или загрузите"
             " четкое изображение."
         ),
-        "heatmap_label": (
-            "Изолированный контур листа и тепловая карта"
-        ),
+        "heatmap_label": "Изолированный контур листа и тепловая карта",
         "tech_title": "⚙️ Характеристики движка",
         "tech_desc": (
             "Сегментация на основе канала a* в CIELAB, полностью исключающая"
@@ -445,7 +437,7 @@ st.markdown(
         <p class="zino-subtitle">{t['subtitle']}</p>
         <div class="zino-dev-badge">{t['dev_by']}</div>
     </div>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
@@ -458,92 +450,87 @@ input_choice = st.radio(
 
 uploaded_file = None
 if input_choice == t["cam_option"]:
-  uploaded_file = st.camera_input(t["cam_label"])
+    uploaded_file = st.camera_input(t["cam_label"])
 else:
-  uploaded_file = st.file_uploader(
-      t["upload_label"], type=["jpg", "jpeg", "png"]
-  )
-
-if uploaded_file is not None:
-  file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-  img_bgr = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-  img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-
-  st.markdown('<div class="zino-card">', unsafe_allow_html=True)
-  st.image(img_rgb, caption="Input Leaf Frame", use_container_width=True)
-  st.markdown("</div>", unsafe_allow_html=True)
-
-  if st.button(t["run_btn"]):
-    # --- الخوارزمية الحتمية والدقيقة لضمان ثبات النتائج ---
-    lab = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
-    a_chan = lab[:, :, 1]
-
-    # عزل الأنسجة النباتية بالاعتماد على القناة a* في CIELAB
-    _, raw_leaf_mask = cv2.threshold(a_chan, 120, 255, cv2.THRESH_BINARY_INV)
-
-    # تنظيف المورفولوجيا لضمان استقرار القناع
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-    cleaned_mask = cv2.morphologyEx(raw_leaf_mask, cv2.MORPH_CLOSE, kernel)
-    cleaned_mask = cv2.morphologyEx(cleaned_mask, cv2.MORPH_OPEN, kernel)
-
-    # استخراج مجسم الورقة الرئيسي وتجاهل الضوضاء الخارجية
-    contours, _ = cv2.findContours(
-        cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    uploaded_file = st.file_uploader(
+        t["upload_label"], type=["jpg", "jpeg", "png"]
     )
 
-    leaf_mask = np.zeros_like(a_chan)
-    if contours:
-      largest_contour = max(contours, key=cv2.contourArea)
-      cv2.drawContours(leaf_mask, [largest_contour], -1, 255, -1)
+if uploaded_file is not None:
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    img_bgr = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-    total_leaf_pixels = float(cv2.countNonZero(leaf_mask))
+    st.markdown('<div class="zino-card">', unsafe_allow_html=True)
+    st.image(img_rgb, caption="Input Leaf Frame", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    if total_leaf_pixels > 1000:
-      # حساب النسيج الأخضر الحيوي في HSV
-      hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
-      lower_green = np.array([28, 35, 35])
-      upper_green = np.array([88, 255, 255])
-      green_raw = cv2.inRange(hsv, lower_green, upper_green)
+    if st.button(t["run_btn"]):
+        # --- الخوارزمية الحتمية والدقيقة لضمان ثبات النتائج ---
+        lab = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
+        a_chan = lab[:, :, 1]
 
-      healthy_mask = cv2.bitwise_and(green_raw, green_raw, mask=leaf_mask)
-      healthy_pixels = float(cv2.countNonZero(healthy_mask))
+        # عزل الأنسجة النباتية بالاعتماد على القناة a* في CIELAB
+        _, raw_leaf_mask = cv2.threshold(a_chan, 120, 255, cv2.THRESH_BINARY_INV)
 
-      damaged_mask = cv2.bitwise_and(leaf_mask, cv2.bitwise_not(healthy_mask))
-      damaged_pixels = float(cv2.countNonZero(damaged_mask))
+        # تنظيف المورفولوجيا لضمان استقرار القناع
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+        cleaned_mask = cv2.morphologyEx(raw_leaf_mask, cv2.MORPH_CLOSE, kernel)
+        cleaned_mask = cv2.morphologyEx(cleaned_mask, cv2.MORPH_OPEN, kernel)
 
-      healthy_pct = (healthy_pixels / total_leaf_pixels) * 100.0
-      damaged_pct = (damaged_pixels / total_leaf_pixels) * 100.0
-
-      # تتبع البقع بعتبة نسبية دقيقة وثابتة
-      lesion_cnts, _ = cv2.findContours(
-          damaged_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-      )
-
-      background_black = np.zeros_like(img_rgb)
-      display_contours = np.where(
-          leaf_mask[:, :, None] == 255, img_rgb, background_black
-      )
-
-      if contours:
-        cv2.drawContours(
-            display_contours, [largest_contour], -1, (0, 255, 0), 2
+        # استخراج مجسم الورقة الرئيسي وتجاهل الضوضاء الخارجية
+        contours, _ = cv2.findContours(
+            cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
 
-      min_lesion_area = max(30, int(total_leaf_pixels * 0.0004))
-      valid_lesions = 0
-      for lc in lesion_cnts:
-        if cv2.contourArea(lc) > min_lesion_area:
-          valid_lesions += 1
-          cv2.drawContours(display_contours, [lc], -1, (255, 0, 0), 2)
+        leaf_mask = np.zeros_like(a_chan)
+        largest_contour = None
+        if contours:
+            largest_contour = max(contours, key=cv2.contourArea)
+            cv2.drawContours(leaf_mask, [largest_contour], -1, 255, -1)
 
-      # توليد الخريطة الحرارية الموجهة للورقة فقط
-      gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
-      heatmap_raw = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
-      heatmap_rgb = cv2.cvtColor(heatmap_raw, cv2.COLOR_BGR2RGB)
-      heatmap_final = cv2.bitwise_and(heatmap_rgb, heatmap_rgb, mask=leaf_mask)
+        total_leaf_pixels = float(cv2.countNonZero(leaf_mask))
 
-      # --- 7. عرض النتائج والتوصيات باللغة الحالية بالكامل ---
-      st.markdown('<div class="zino-card">', unsafe_allow_html=True)
-      st.markdown(
-          f'<div class="report-title">{t["report_title"]}</div>',
-          unsafe_all
+        if total_leaf_pixels > 1000:
+            # حساب النسيج الأخضر الحيوي في HSV
+            hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+            lower_green = np.array([28, 35, 35])
+            upper_green = np.array([88, 255, 255])
+            green_raw = cv2.inRange(hsv, lower_green, upper_green)
+
+            healthy_mask = cv2.bitwise_and(green_raw, green_raw, mask=leaf_mask)
+            healthy_pixels = float(cv2.countNonZero(healthy_mask))
+
+            damaged_mask = cv2.bitwise_and(leaf_mask, cv2.bitwise_not(healthy_mask))
+            damaged_pixels = float(cv2.countNonZero(damaged_mask))
+
+            healthy_pct = (healthy_pixels / total_leaf_pixels) * 100.0
+            damaged_pct = (damaged_pixels / total_leaf_pixels) * 100.0
+
+            # تتبع البقع بعتبة نسبية دقيقة وثابتة
+            lesion_cnts, _ = cv2.findContours(
+                damaged_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+            )
+
+            background_black = np.zeros_like(img_rgb)
+            display_contours = np.where(
+                leaf_mask[:, :, None] == 255, img_rgb, background_black
+            )
+
+            if largest_contour is not None:
+                cv2.drawContours(
+                    display_contours, [largest_contour], -1, (0, 255, 0), 2
+                )
+
+            min_lesion_area = max(30, int(total_leaf_pixels * 0.0004))
+            valid_lesions = 0
+            for lc in lesion_cnts:
+                if cv2.contourArea(lc) > min_lesion_area:
+                    valid_lesions += 1
+                    cv2.drawContours(display_contours, [lc], -1, (255, 0, 0), 2)
+
+            # توليد الخريطة الحرارية الموجهة للورقة فقط
+            gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+            heatmap_raw = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
+            heatmap_rgb = cv2.cvtColor(heatmap_raw, cv2.COLOR_BGR2RGB)
+            heatmap_final = cv2.bitwise_a
