@@ -105,7 +105,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- 3. القاموس الموحد والمكتمل للغات الخمس ---
+# --- 3. القاموس الموحد للغات الخمس ---
 TEXTS = {
     "العربية": {
         "title": "ZINO AgroVision",
@@ -514,7 +514,7 @@ if uploaded_file is not None:
       healthy_pct = (healthy_pixels / total_leaf_pixels) * 100.0
       damaged_pct = (damaged_pixels / total_leaf_pixels) * 100.0
 
-      # تتبع البقع بعتبة نسبية دقيقة وثابتة تجنباً للتذبذب مع تغيير أبعاد الصورة
+      # تتبع البقع بعتبة نسبية دقيقة وثابتة
       lesion_cnts, _ = cv2.findContours(
           damaged_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
       )
@@ -529,7 +529,6 @@ if uploaded_file is not None:
             display_contours, [largest_contour], -1, (0, 255, 0), 2
         )
 
-      # عتبة مساحة دقيقة متناسبة مع مساحة الورقة لضمان الحتمية
       min_lesion_area = max(30, int(total_leaf_pixels * 0.0004))
       valid_lesions = 0
       for lc in lesion_cnts:
@@ -544,4 +543,7 @@ if uploaded_file is not None:
       heatmap_final = cv2.bitwise_and(heatmap_rgb, heatmap_rgb, mask=leaf_mask)
 
       # --- 7. عرض النتائج والتوصيات باللغة الحالية بالكامل ---
-      st.markdown('<div class="zino-card">', unsafe_allow_html=Tr
+      st.markdown('<div class="zino-card">', unsafe_allow_html=True)
+      st.markdown(
+          f'<div class="report-title">{t["report_title"]}</div>',
+          unsafe_all
