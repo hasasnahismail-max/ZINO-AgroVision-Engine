@@ -394,7 +394,9 @@ if img_rgb is not None:
         total_leaf_pixels = float(cv2.countNonZero(leaf_mask))
         total_img_pixels = float(img_bgr.shape[0] * img_bgr.shape[1])
         leaf_coverage_ratio = (total_leaf_pixels / total_img_pixels) * 100.0
-        
-        if total_leaf_pixels > 1000 and leaf_coverage_ratio > 1.5:
-            hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
-            lower_green = np.array([28
+
+    if total_leaf_pixels > 1000 and leaf_coverage_ratio > 1.5:
+        hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+        lower_green = np.array([28, 35, 35])
+        upper_green = np.array([88, 255, 255])
+        green_raw = cv2.inRange(hsv, lower_green, upper_green)
