@@ -137,7 +137,7 @@ TEXTS = {
     "English": {
         "title": "ZINO AgroVision",
         "subtitle": "Advanced Agricultural Vision Engine | Quantitative Leaf Surface Diagnostics",
-        "dev_by": "Designed and Developed by Ismail Hassasneh",
+        "dev_by": "Designed and Developed by Ismail Hasasa",
         "upload_label": "Upload Leaf Image for Quantitative Analysis",
         "input_cap": "Input Image Frame",
         "run_btn": "🔬 Run Computer Vision & Pixel Analysis Engine",
@@ -167,7 +167,7 @@ TEXTS = {
     "Русский": {
         "title": "ZINO AgroVision",
         "subtitle": "Система компьютерного зрения | Количественная диагностика поверхности листа",
-        "dev_by": "Дизайн и разработка: Исмаил Хассасне",
+        "dev_by": "Дизайн и разработка: Исмаил Хассасна",
         "upload_label": "Загрузить изображение листа для анализа",
         "input_cap": "Кадр исходного изображения",
         "run_btn": "🔬 Запустить компьютерный анализ пикселей",
